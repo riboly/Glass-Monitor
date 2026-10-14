@@ -6,7 +6,7 @@ import unittest
 from dataclasses import dataclass
 from pathlib import Path
 
-import app_storage
+import app_storage  # 导入应用存储模块
 from alerting import AlertManager
 from cards_meta import CARD_IDS, normalize_card_order
 from metrics_worker import MetricsWorker
@@ -28,7 +28,7 @@ class CoreTests(unittest.TestCase):
             "duration_sec": 10,
             "cooldown_sec": 30,
             "hysteresis": 3,
-        }
+        }//
         self.assertEqual(manager.evaluate({"cpu_temp": 85}, cfg, now=0), [])
         self.assertEqual(len(manager.evaluate({"cpu_temp": 85}, cfg, now=10)), 1)
         self.assertEqual(manager.evaluate({"cpu_temp": 84}, cfg, now=20), [])
