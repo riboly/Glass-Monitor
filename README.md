@@ -21,7 +21,7 @@ NVML. Idle CPU usage is typically under 1%, memory around 30–50 MB.
 - **Minimal-desktop fans**: a small glass panel with themes, rounded corners,
   adjustable opacity, and per-card double-click shortcuts.
 
-## 功能
+## Features
 
 ### Cards — all toggleable and reorderable
 
@@ -80,9 +80,9 @@ sleeps, or empties the Recycle Bin, because a double-click is easy to hit
 by accident. Adding a new action is a one-line change in `actions.py`'s
 `ACTIONS` registry; it then appears in the Settings dropdown automatically.
 
-### 设置
+### Settings
 
-Everything is configured from the tray / right-click **设置** window and
+Everything is configured from the tray / right-click **Settings** window and
 written to `config.json` in the program directory, so your layout, theme,
 and card order travel with the folder if you move it.
 
@@ -196,7 +196,7 @@ run.bat             # One-click launch
 tests/              # Core tests
 ```
 
-## 贡献指南
+## Contributing
 
 Issues and pull requests are welcome. If you add a feature, please keep
 the low-resource discipline above: no heavy frameworks, no subprocesses on
