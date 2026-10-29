@@ -1,5 +1,7 @@
 # GlassMonitor — Windows Floating System Monitor
 
+![GlassMonitor floating widget on desktop](assets/zmjk.png)
+
 A lightweight, always-on-top floating widget for Windows that shows live
 hardware stats and network speed in a frosted-glass panel, styled after iOS
 glassmorphism. It docks to the right side of the screen by default, stays out
