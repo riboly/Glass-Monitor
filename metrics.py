@@ -502,7 +502,24 @@ class MetricsCollector:
         return ups, downs
 
 
-def format_speed(bps: float) -> str:
+def format_speed(bps: float, unit: str = "bytes") -> str:
+    """格式化速率。
+
+    unit="bytes"（默认）：按字节显示 B/s、KB/s、MB/s、GB/s。
+    unit="bits"：按比特显示 bps、Kbps、Mbps、Gbps，
+    与运营商带宽口径一致（1 Mbps = 1000 Kbps）。
+    """
+    if unit == "bits":
+        bits = bps * 8.0
+        if bits < 1000:
+            return f"{bits:.0f} bps"
+        kb = bits / 1000.0
+        if kb < 1000:
+            return f"{kb:.1f} Kbps"
+        mb = kb / 1000.0
+        if mb < 1000:
+            return f"{mb:.2f} Mbps"
+        return f"{mb / 1000.0:.2f} Gbps"
     if bps < 1024:
         return f"{bps:.0f} B/s"
     kb = bps / 1024.0

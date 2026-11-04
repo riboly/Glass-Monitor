@@ -3,6 +3,9 @@
   "autostart": false,
   "update_interval_ms": 1000,
   "history_points": 60,
+  "speed": {
+    "unit": "bytes"
+  },
   "hotkey": {
     "enabled": true,
     "toggle_visible": "ctrl+shift+Q"

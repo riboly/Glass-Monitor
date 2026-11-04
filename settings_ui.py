@@ -271,6 +271,24 @@ class SettingsWindow:
         cmb_layout.bind("<<ComboboxSelected>>", self._on_layout_selected)
         self._claim_wheel(cmb_layout)
 
+        ttk.Label(root_f, text="网速单位").pack(
+            anchor="w", padx=pad_x, pady=(10, 4)
+        )
+        self._speed_ids = ["bytes", "bits"]
+        self._speed_labels = ["MB/s（字节口径）", "Mbps（比特口径）"]
+        speed_id = str(self.cfg.get("speed", {}).get("unit", "bytes"))
+        if speed_id not in self._speed_ids:
+            speed_id = "bytes"
+        self.var_speed = tk.StringVar(
+            value=self._speed_labels[self._speed_ids.index(speed_id)]
+        )
+        cmb_speed = ttk.Combobox(
+            root_f, textvariable=self.var_speed, values=self._speed_labels,
+            state="readonly", style="Theme.TCombobox", width=16,
+        )
+        cmb_speed.pack(anchor="w", padx=pad_x)
+        self._claim_wheel(cmb_speed)
+
         row_width = ttk.Frame(root_f)
         row_width.pack(anchor="w", padx=pad_x, pady=(8, 2), fill=tk.X)
         ttk.Label(row_width, text="窗口宽度（260–420）").pack(side=tk.LEFT)
@@ -1067,6 +1085,12 @@ class SettingsWindow:
                 )
                 return
 
+        speed_label = self.var_speed.get()
+        selected_speed = (
+            self._speed_ids[self._speed_labels.index(speed_label)]
+            if speed_label in self._speed_labels else "bytes"
+        )
+
         new_cfg = dict(self.cfg)
         new_cfg["theme_id"] = theme_id
         new_cfg["autostart"] = bool(self.var_autostart.get())
@@ -1080,6 +1104,7 @@ class SettingsWindow:
             "stroke": clock_stroke,
             "tracking": clock_tracking,
         }
+        new_cfg["speed"] = {"unit": selected_speed}
         new_cfg["style"] = dict(THEMES[theme_id]["style"])
 
         new_cfg["hotkey"] = {

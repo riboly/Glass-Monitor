@@ -390,6 +390,12 @@ class GlassMonitorApp:
             clock["tracking"] = 2.0
         cfg["clock"] = clock
 
+        # 网速单位：bytes = MB/s 等字节口径（默认），bits = Mbps 等比特口径。
+        speed = dict(cfg.get("speed", {}))
+        if speed.get("unit") not in ("bytes", "bits"):
+            speed["unit"] = "bytes"
+        cfg["speed"] = speed
+
         win = dict(cfg.get("window", {}))
         win.setdefault("width", 300)
         win.setdefault("margin_right", 20)
@@ -879,9 +885,10 @@ class GlassMonitorApp:
         h = lay["speed_h"]
         cap_w = lay["speed_cap_w"]
         badge = max(16, int(h * 0.44))
+        unit = self.cfg.get("speed", {}).get("unit", "bytes")
         halves = (
-            (lay["speed_xs"][0], self.c["up"], "上传", format_speed(up), "up"),
-            (lay["speed_xs"][1], self.c["down"], "下载", format_speed(down), "down"),
+            (lay["speed_xs"][0], self.c["up"], "上传", format_speed(up, unit), "up"),
+            (lay["speed_xs"][1], self.c["down"], "下载", format_speed(down, unit), "down"),
         )
         for x, accent, label, value, direction in halves:
             composite_at(
@@ -940,7 +947,8 @@ class GlassMonitorApp:
             composite_at(img, render_series(iw, ih, series, scale=3), ix, iy)
 
         draw_text(
-            img, (cx + cw - 12, cy + 12), f"峰值 {format_speed(peak)}",
+            img, (cx + cw - 12, cy + 12),
+            f"峰值 {format_speed(peak, self.cfg.get('speed', {}).get('unit', 'bytes'))}",
             size=10, color=blend_hex(self.c["down"], "#FFFFFF", 0.72),
             anchor="ra", halo=self.halo,
         )
@@ -951,8 +959,9 @@ class GlassMonitorApp:
             return
         x, y, w, _h = box
         s = self._sample
-        rd = format_speed(s.disk_read_bps) if s else "—"
-        wr = format_speed(s.disk_write_bps) if s else "—"
+        unit = self.cfg.get("speed", {}).get("unit", "bytes")
+        rd = format_speed(s.disk_read_bps, unit) if s else "—"
+        wr = format_speed(s.disk_write_bps, unit) if s else "—"
         self._draw_card_head(img, box, "磁盘", "")
         # 读/写并排放右侧，各自带汉字前缀——只靠颜色区分方向是认不出来的
         p = self.CARD_PAD_X
