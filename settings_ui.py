@@ -442,6 +442,24 @@ class SettingsWindow:
             style="Hint.TLabel",
         ).pack(anchor="w", padx=pad_x)
 
+        ttk.Label(root_f, text="时钟日期格式").pack(
+            anchor="w", padx=pad_x, pady=(10, 4)
+        )
+        self._date_fmt_ids = ["zh", "iso"]
+        self._date_fmt_labels = ["2026年11月4日（中文）", "2026-11-04（ISO）"]
+        date_fmt = str(clock_cfg.get("date_format", "zh"))
+        if date_fmt not in self._date_fmt_ids:
+            date_fmt = "zh"
+        self.var_date_fmt = tk.StringVar(
+            value=self._date_fmt_labels[self._date_fmt_ids.index(date_fmt)]
+        )
+        cmb_date_fmt = ttk.Combobox(
+            root_f, textvariable=self.var_date_fmt, values=self._date_fmt_labels,
+            state="readonly", style="Theme.TCombobox", width=20,
+        )
+        cmb_date_fmt.pack(anchor="w", padx=pad_x)
+        self._claim_wheel(cmb_date_fmt)
+
         # —— 启动相关 ——
         self.var_autostart = tk.BooleanVar(value=bool(self.cfg.get("autostart", False)))
         ttk.Checkbutton(
@@ -1090,6 +1108,11 @@ class SettingsWindow:
             self._speed_ids[self._speed_labels.index(speed_label)]
             if speed_label in self._speed_labels else "bytes"
         )
+        date_label = self.var_date_fmt.get()
+        selected_date_fmt = (
+            self._date_fmt_ids[self._date_fmt_labels.index(date_label)]
+            if date_label in self._date_fmt_labels else "zh"
+        )
 
         new_cfg = dict(self.cfg)
         new_cfg["theme_id"] = theme_id
@@ -1103,6 +1126,7 @@ class SettingsWindow:
             **dict(new_cfg.get("clock", {})),
             "stroke": clock_stroke,
             "tracking": clock_tracking,
+            "date_format": selected_date_fmt,
         }
         new_cfg["speed"] = {"unit": selected_speed}
         new_cfg["style"] = dict(THEMES[theme_id]["style"])

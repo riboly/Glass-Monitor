@@ -6,6 +6,11 @@
   "speed": {
     "unit": "bytes"
   },
+  "clock": {
+    "stroke": 1.4,
+    "tracking": 2.0,
+    "date_format": "zh"
+  },
   "hotkey": {
     "enabled": true,
     "toggle_visible": "ctrl+shift+Q"

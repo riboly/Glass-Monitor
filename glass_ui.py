@@ -388,6 +388,8 @@ class GlassMonitorApp:
             clock["tracking"] = max(0.0, min(6.0, float(clock.get("tracking", 2.0))))
         except Exception:
             clock["tracking"] = 2.0
+        if clock.get("date_format") not in ("zh", "iso"):
+            clock["date_format"] = "zh"
         cfg["clock"] = clock
 
         # 网速单位：bytes = MB/s 等字节口径（默认），bits = Mbps 等比特口径。
@@ -846,8 +848,12 @@ class GlassMonitorApp:
         date_y = y + 53
         draw_text(img, (right_x, weekday_y), self.WEEKDAYS[now.weekday()],
                   size=15, bold=True, color=self.c["down"], anchor="rm", halo=self.halo)
+        if self.cfg.get("clock", {}).get("date_format") == "iso":
+            date_text = f"{now.year}-{now.month:02d}-{now.day:02d}"
+        else:
+            date_text = f"{now.year}年{now.month}月{now.day}日"
         draw_text(img, (right_x, date_y),
-                  f"{now.year}年{now.month}月{now.day}日", size=11,
+                  date_text, size=11,
                   color=self.c["sub"], anchor="rm", halo=self.halo)
 
     def _draw_hw(self, img: Image.Image, lay: dict) -> None:
