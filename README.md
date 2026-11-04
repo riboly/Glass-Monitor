@@ -92,7 +92,7 @@ and card order travel with the folder if you move it.
 | Lock position | Prevents accidental dragging |
 | Auto-hide on fullscreen | Hides over fullscreen apps |
 | Edge snap distance | 0–64 px, 0 disables snapping |
-| Themes | 15 built-in schemes (Midnight Glass, Deep Sea, Aurora Mint, Cobalt Dusk, …) |
+| Themes | 16 built-in schemes (Midnight Glass, Deep Sea, Aurora Mint, Cobalt Dusk, Amber Dusk, …) |
 | Corner radius | 8–36 px, default 22 |
 | Window / card opacity | Sliders, applied live as you drag |
 | Text halo strength | 0–100%, keeps text readable on light wallpapers, 0 disables it |
