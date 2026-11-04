@@ -153,6 +153,11 @@ def _toggle_mute() -> None:
     u.keybd_event(_VK_VOLUME_MUTE, 0, 2, 0)
 
 
+def _screen_off() -> None:
+    # 关闭显示器（动一下鼠标/键盘即恢复，非破坏性操作）。
+    ctypes.windll.user32.SendMessageW(0xFFFF, 0x0112, 0xF170, 2)
+
+
 # ---------------------------------------------------------------- 注册表
 
 class Action(NamedTuple):
@@ -222,6 +227,7 @@ ACTIONS: Tuple[Action, ...] = (
     Action("screenclip", "桌面", "截图", lambda app: _uri("ms-screenclip:")),
     Action("toggle_mute", "桌面", "静音开关", lambda app: _toggle_mute()),
     Action("lock", "桌面", "锁定屏幕", lambda app: ctypes.windll.user32.LockWorkStation()),
+    Action("screen_off", "桌面", "关闭显示器", lambda app: _screen_off()),
 
     # —— 本程序 ——
     Action("widget_settings", "本程序", "打开设置", lambda app: app.open_settings()),
