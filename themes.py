@@ -360,13 +360,35 @@ THEMES: Dict[str, dict] = {
             "traffic_red": "#FF453A",
         },
     },
+    "mist_blue": {
+        "name": "雾蓝晨光",
+        "desc": "灰蓝玻璃 + 晨雾蓝",
+        "style": {
+            "accent_cpu": "#7FB4E8",
+            "accent_mem": "#8FD0DD",
+            "accent_gpu": "#5AA9E6",
+            "accent_up": "#FFB86B",
+            "accent_down": "#4DA3FF",
+            "text_primary": "#EAF2F8",
+            "text_secondary": "#93A8BB",
+            "text_tertiary": "#5F7488",
+            "glass_bg": "#0F1820",
+            "glass_card": "#17242F",
+            "glass_elevated": "#223344",
+            "glass_border": "#33475C",
+            "separator": "#223344",
+            "traffic_green": "#30D158",
+            "traffic_yellow": "#FFD60A",
+            "traffic_red": "#FF453A",
+        },
+    },
 }
 
 THEME_ORDER: List[str] = [
     "midnight", "ocean", "sakura", "forest", "mono",
     "aurora", "cobalt", "lavender", "frost", "deep_space",
     "teal_noir", "plum", "mint_graphite", "arctic", "blueprint",
-    "amber_dusk",
+    "amber_dusk", "mist_blue",
 ]
 
 
