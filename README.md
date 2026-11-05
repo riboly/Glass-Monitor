@@ -65,14 +65,14 @@ in Settings) to change their order.
 There is deliberately **no close button on the window** — quit from the tray
 menu or the right-click menu.
 
-### Double-click actions — 40 to choose from
+### Double-click actions — 41 to choose from
 
 Every card can be bound to its own double-click action, configured in
 Settings. The built-in actions cover system tools (Task Manager, Resource
 Monitor, Disk Management, Services, Event Viewer, …), terminals
 (PowerShell, Command Prompt), folders (This PC, Downloads, Recycle Bin),
 system settings pages, desktop utilities (show/hide desktop icons, mute,
-lock screen, screenshot), and widget controls (open settings, toggle
+lock screen, screenshot, screen off), and widget controls (open settings, toggle
 always-on-top, collapse, hide, refresh traffic now).
 
 Only non-destructive actions are included — nothing that shuts down,
