@@ -28,7 +28,7 @@ class CoreTests(unittest.TestCase):
             "duration_sec": 10,
             "cooldown_sec": 30,
             "hysteresis": 3,
-        }//
+        }
         self.assertEqual(manager.evaluate({"cpu_temp": 85}, cfg, now=0), [])
         self.assertEqual(len(manager.evaluate({"cpu_temp": 85}, cfg, now=10)), 1)
         self.assertEqual(manager.evaluate({"cpu_temp": 84}, cfg, now=20), [])
@@ -41,6 +41,20 @@ class CoreTests(unittest.TestCase):
         self.assertTrue(info.ok)
         self.assertEqual(info.used, 400)
         self.assertEqual(info.percent, 40.0)
+
+    def test_format_speed_units_and_boundaries(self) -> None:
+        from metrics import format_speed
+
+        self.assertEqual(format_speed(0), "0 B/s")
+        self.assertEqual(format_speed(512), "512 B/s")
+        self.assertEqual(format_speed(1024), "1.0 KB/s")
+        self.assertEqual(format_speed(1536), "1.5 KB/s")
+        self.assertEqual(format_speed(1024**2), "1.00 MB/s")
+        self.assertEqual(format_speed(1024**3), "1.00 GB/s")
+        self.assertEqual(format_speed(0, "bits"), "0 bps")
+        self.assertEqual(format_speed(125, "bits"), "1.0 Kbps")
+        self.assertEqual(format_speed(125000, "bits"), "1.00 Mbps")
+        self.assertEqual(format_speed(125000000, "bits"), "1.00 Gbps")
 
     def test_atomic_storage_and_legacy_migration(self) -> None:
         names = (
