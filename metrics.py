@@ -510,25 +510,17 @@ def format_speed(bps: float, unit: str = "bytes") -> str:
     与运营商带宽口径一致（1 Mbps = 1000 Kbps）。
     """
     if unit == "bits":
-        bits = bps * 8.0
-        if bits < 1000:
-            return f"{bits:.0f} bps"
-        kb = bits / 1000.0
-        if kb < 1000:
-            return f"{kb:.1f} Kbps"
-        mb = kb / 1000.0
-        if mb < 1000:
-            return f"{mb:.2f} Mbps"
-        return f"{mb / 1000.0:.2f} Gbps"
-    if bps < 1024:
-        return f"{bps:.0f} B/s"
-    kb = bps / 1024.0
-    if kb < 1024:
-        return f"{kb:.1f} KB/s"
-    mb = kb / 1024.0
-    if mb < 1024:
-        return f"{mb:.2f} MB/s"
-    return f"{mb / 1024.0:.2f} GB/s"
+        value = float(bps) * 8.0
+        base, units = 1000.0, ("bps", "Kbps", "Mbps", "Gbps")
+    else:
+        value = float(bps)
+        base, units = 1024.0, ("B/s", "KB/s", "MB/s", "GB/s")
+    idx = 0
+    while value >= base and idx < len(units) - 1:
+        value /= base
+        idx += 1
+    precision = 0 if idx == 0 else (1 if idx == 1 else 2)
+    return f"{value:.{precision}f} {units[idx]}"
 
 
 def format_temp(t: Optional[float]) -> str:
