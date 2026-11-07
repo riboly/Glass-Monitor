@@ -56,6 +56,20 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(format_speed(125000, "bits"), "1.00 Mbps")
         self.assertEqual(format_speed(125000000, "bits"), "1.00 Gbps")
 
+    def test_format_uptime_boundaries(self) -> None:
+        from metrics import format_uptime
+
+        self.assertEqual(format_uptime(0), "0分钟")
+        self.assertEqual(format_uptime(-5), "0分钟")
+        self.assertEqual(format_uptime(59), "0分钟")  # 不足一分钟向下取整
+        self.assertEqual(format_uptime(60), "1分钟")
+        self.assertEqual(format_uptime(61), "1分钟")
+        self.assertEqual(format_uptime(3599), "59分钟")
+        self.assertEqual(format_uptime(3600), "1小时0分")
+        self.assertEqual(format_uptime(3660), "1小时1分")
+        self.assertEqual(format_uptime(86400), "1天0小时")
+        self.assertEqual(format_uptime(90061), "1天1小时")
+
     def test_atomic_storage_and_legacy_migration(self) -> None:
         names = (
             "ROOT", "DATA_ROOT", "CONFIG_PATH", "POS_PATH", "CRASH_LOG",
