@@ -196,7 +196,7 @@ def _ensure_cpu_temp_thread() -> None:
     t.start()
 
 
-def get_cpu_temp(force: bool = False) -> Optional[float]:
+def get_cpu_temp() -> Optional[float]:
     _ensure_cpu_temp_thread()
     with _cpu_temp_lock:
         return _cpu_temp_cache
