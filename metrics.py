@@ -55,9 +55,10 @@ def _pick_discrete_nvml_handle(pynvml):
         mem = int(pynvml.nvmlDeviceGetMemoryInfo(h).total)
         low = name.lower()
         score = mem // (1024 * 1024)
+        # 注："rtx a"（RTX A 系列专业卡）是 "rtx" 的子串，已被覆盖，不单列。
         if any(
             k in low
-            for k in ("geforce", "rtx", "gtx", "quadro", "tesla", "titan", "rtx a")
+            for k in ("geforce", "rtx", "gtx", "quadro", "tesla", "titan")
         ):
             score += 10_000_000
         if "nvidia" in low:
