@@ -70,6 +70,40 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(format_uptime(86400), "1天0小时")
         self.assertEqual(format_uptime(90061), "1天1小时")
 
+    def test_discrete_gpu_picker_prefers_rtx_a_via_rtx(self) -> None:
+        from types import SimpleNamespace
+
+        from metrics import _pick_discrete_nvml_handle
+
+        class FakePynvml:
+            def __init__(self, devices):
+                self.devices = devices  # [(name, total_bytes)]
+
+            def nvmlDeviceGetCount(self):
+                return len(self.devices)
+
+            def nvmlDeviceGetHandleByIndex(self, i):
+                return i
+
+            def nvmlDeviceGetName(self, h):
+                return self.devices[h][0]
+
+            def nvmlDeviceGetMemoryInfo(self, h):
+                return SimpleNamespace(total=self.devices[h][1])
+
+        gb = 1024 ** 3
+        fake = FakePynvml(
+            [
+                ("Microsoft Basic Render Driver", 32 * gb),
+                (b"NVIDIA GeForce RTX 4060", 8 * gb),
+                ("NVIDIA RTX A4000", 16 * gb),
+            ]
+        )
+        _handle, name = _pick_discrete_nvml_handle(fake)
+        # RTX A4000 仍靠 "rtx" 子串拿到独显加分，胜过 4060（显存更大）；
+        # 32GB 虚拟卡虽显存最大，但因虚拟扣分不得胜出；bytes 卡名亦能解码。
+        self.assertEqual(name, "NVIDIA RTX A4000")
+
     def test_atomic_storage_and_legacy_migration(self) -> None:
         names = (
             "ROOT", "DATA_ROOT", "CONFIG_PATH", "POS_PATH", "CRASH_LOG",
