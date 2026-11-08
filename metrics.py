@@ -22,6 +22,7 @@ import psutil
 
 ROOT = Path(__file__).resolve().parent
 CPU_TEMP_HELPER = ROOT / "bin" / "cpu_temp_helper.exe"
+_GB = 1024.0 ** 3  # 字节转 GB 的除数，各处 GB 换算共用
 
 # ---------------------------------------------------------------------------
 # GPU：NVML（与 nvidia-smi 同源）读独显占用 + 温度
@@ -102,8 +103,7 @@ def gpu_memory() -> Tuple[Optional[float], Optional[float]]:
         return None, None
     try:
         info = _nvml_module.nvmlDeviceGetMemoryInfo(_nvml_handle)
-        g = 1024.0 ** 3
-        return float(info.used) / g, float(info.total) / g
+        return float(info.used) / _GB, float(info.total) / _GB
     except Exception:
         return None, None
 
@@ -349,10 +349,9 @@ class MetricsCollector:
                     u = psutil.disk_usage(p.mountpoint)
                 except Exception:
                     continue
-                g = 1024.0 ** 3
                 label = p.mountpoint.rstrip("\\/") or p.mountpoint
                 out.append(PartInfo(label, float(u.percent),
-                                    u.used / g, u.total / g))
+                                    u.used / _GB, u.total / _GB))
         except Exception:
             pass
         out.sort(key=lambda x: x.percent, reverse=True)
@@ -428,8 +427,8 @@ class MetricsCollector:
             cpu = float(psutil.cpu_percent(interval=None))
             vm = psutil.virtual_memory()
             mem = float(vm.percent)
-            mem_used_gb = float(vm.used) / (1024.0 ** 3)
-            mem_total_gb = float(vm.total) / (1024.0 ** 3)
+            mem_used_gb = float(vm.used) / _GB
+            mem_total_gb = float(vm.total) / _GB
         else:
             cpu = mem = mem_used_gb = mem_total_gb = 0.0
         gpu, gpu_temp = _gpu_stats() if needs.get("gpu_stats") else (None, None)
