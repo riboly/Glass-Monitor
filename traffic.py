@@ -102,10 +102,7 @@ def fetch_traffic(
     last_err = ""
     for px in proxies_try:
         try:
-            if px:
-                handler = urllib.request.ProxyHandler(px)
-            else:
-                handler = urllib.request.ProxyHandler({})
+            handler = urllib.request.ProxyHandler(px)
             opener = urllib.request.build_opener(handler)
             req = urllib.request.Request(
                 url,
