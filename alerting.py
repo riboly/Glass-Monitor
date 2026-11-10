@@ -6,12 +6,15 @@ import time
 from dataclasses import dataclass
 from typing import Mapping, Optional
 
+# 从未通知过的时间戳哨兵：足够小，使首次冷却检查恒成立。
+_NEVER_NOTIFIED: float = -1e12
+
 
 @dataclass
 class _State:
     exceeded_since: Optional[float] = None
     active: bool = False
-    last_notified: float = -1e12
+    last_notified: float = _NEVER_NOTIFIED
 
 
 class AlertManager:
