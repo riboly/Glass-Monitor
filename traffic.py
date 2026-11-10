@@ -284,9 +284,18 @@ class TrafficCollector:
                 self.start()
 
 
+# 字节单位阶梯：由大到小，format_bytes 共用。
+_BYTE_UNITS: tuple[tuple[str, float], ...] = (
+    ("TB", 1024**4),
+    ("GB", 1024**3),
+    ("MB", 1024**2),
+    ("KB", 1024),
+)
+
+
 def format_bytes(n: int) -> str:
     n = float(max(0, n))
-    for unit, div in (("TB", 1024**4), ("GB", 1024**3), ("MB", 1024**2), ("KB", 1024)):
+    for unit, div in _BYTE_UNITS:
         if n >= div:
             return f"{n / div:.2f} {unit}"
     return f"{int(n)} B"
