@@ -42,6 +42,22 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(info.used, 400)
         self.assertEqual(info.percent, 40.0)
 
+    def test_traffic_parser_rejects_bad_values(self) -> None:
+        # 小数向下取整、非法值跳过、负数钳制为 0
+        info = parse_traffic_body("upload=1.9; download=abc; total=1000")
+        self.assertEqual(info.upload, 1)
+        self.assertEqual(info.download, 0)
+        self.assertTrue(info.ok)
+        info = parse_traffic_body("upload=-5; download=300; total=1000")
+        self.assertEqual(info.upload, 0)
+        self.assertEqual(info.used, 300)
+        self.assertEqual(info.percent, 30.0)
+        # total 非法或缺失 → total 为 0，解析失败
+        info = parse_traffic_body("upload=100; download=300; total=xyz")
+        self.assertFalse(info.ok)
+        self.assertEqual(info.status, "failed")
+        self.assertEqual(info.error, "invalid total")
+
     def test_format_speed_units_and_boundaries(self) -> None:
         from metrics import format_speed
 
