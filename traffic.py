@@ -40,6 +40,17 @@ class TrafficInfo:
         return min(100.0, self.used * 100.0 / self.total)
 
 
+def _parse_traffic_value(v: str) -> Optional[int]:
+    """解析单项流量数值：接受整数或小数字符串（向下取整）。
+
+    非法值返回 None（调用方跳过该项）；负数钳制为 0，流量不该为负。
+    """
+    try:
+        return max(0, int(float(v)))
+    except ValueError:
+        return None
+
+
 def parse_traffic_body(text: str) -> TrafficInfo:
     data = {}
     for part in (text or "").replace("\n", "").split(";"):
@@ -48,15 +59,15 @@ def parse_traffic_body(text: str) -> TrafficInfo:
             continue
         k, v = part.split("=", 1)
         k, v = k.strip().lower(), v.strip()
-        try:
-            data[k] = int(float(v))
-        except ValueError:
+        n = _parse_traffic_value(v)
+        if n is None:
             continue
+        data[k] = n
     info = TrafficInfo(
-        upload=int(data.get("upload", 0)),
-        download=int(data.get("download", 0)),
-        total=int(data.get("total", 0)),
-        expire=int(data.get("expire", 0)),
+        upload=data.get("upload", 0),
+        download=data.get("download", 0),
+        total=data.get("total", 0),
+        expire=data.get("expire", 0),
         ok=True,
         status="ok",
     )
