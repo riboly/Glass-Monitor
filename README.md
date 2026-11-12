@@ -198,6 +198,20 @@ run.bat             # One-click launch
 tests/              # Core tests
 ```
 
+## Running tests
+
+```bat
+python -m unittest discover -s tests -v
+```
+
+Run it from the program directory so the tests can import the project
+modules. `test_core.py` needs `psutil`; install it first with
+`pip install -r requirements.txt`.
+
+On Linux, 3 tests fail by design: the two tests that import `glass_ui`
+need Windows-only APIs (`ctypes.windll`), and the legacy-migration test
+expects Windows user-data paths. Run the suite on Windows to cover them.
+
 ## Contributing
 
 Issues and pull requests are welcome. If you add a feature, please keep
