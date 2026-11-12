@@ -155,6 +155,23 @@ def _log_crash(msg: str) -> None:
     append_crash_log(msg)
 
 
+def _restart_command(pid: int, exe: str, script: str, workdir: str) -> list:
+    """重启小部件用的等待命令：等 pid 退出后，用同一解释器重跑 monitor.py。
+
+    纯函数（不启动进程），便于单测。PowerShell 轮询本进程退出再拉新进程，
+    避免新进程启动时旧进程还没释放 SingleInstance 锁而被直接挡掉。
+    """
+    ps = (
+        f"$p={pid}; "
+        "while (Get-Process -Id $p -ErrorAction SilentlyContinue) "
+        "{ Start-Sleep -Milliseconds 200 }; "
+        f"Start-Process -FilePath '{exe}' -ArgumentList '\"{script}\"' "
+        f"-WorkingDirectory '{workdir}'"
+    )
+    return ["powershell", "-NoProfile", "-WindowStyle", "Hidden",
+            "-Command", ps]
+
+
 def _hex_to_rgb(h: str) -> Tuple[int, int, int]:
     h = h.lstrip("#")
     return int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
@@ -1613,6 +1630,7 @@ class GlassMonitorApp:
             Item("鼠标穿透", ui(self._toggle_click_through),
                  checked=lambda item: self._is_click_through()),
             pystray.Menu.SEPARATOR,
+            Item("重启小部件", ui(self._restart_widget)),
             Item("退出", ui(self.close)),
         )
         self._tray_icon = pystray.Icon(
@@ -1626,6 +1644,30 @@ class GlassMonitorApp:
                 _log_crash(f"[tray.run] {e}")
 
         threading.Thread(target=_run, name="tray", daemon=True).start()
+
+    def _restart_widget(self) -> None:
+        """托盘菜单“重启小部件”：起一个脱离的等待进程后退出本进程。
+
+        等待进程见 _restart_command：等本进程退出再用同一解释器重跑
+        monitor.py，这样配置重载、主题切换后的残留状态都能清掉。
+        """
+        import subprocess
+        import sys
+
+        script = ROOT / "monitor.py"
+        if not script.is_file():
+            _log_crash("[restart] monitor.py not found")
+            return
+        try:
+            subprocess.Popen(
+                _restart_command(os.getpid(), sys.executable,
+                                 str(script), str(ROOT)),
+                close_fds=True,
+            )
+        except Exception as e:
+            _log_crash(f"[restart] {e}")
+            return
+        self.close()
 
     def _evaluate_alerts(self, metrics) -> None:
         fresh_metrics = (

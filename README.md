@@ -59,7 +59,7 @@ in Settings) to change their order.
 | Left-drag | Move the window (position is saved to `window_pos.json` on release) |
 | Double-click a card | Runs that card's assigned action (customizable, see below) |
 | Right-click | Menu: Settings, Show/Hide, Always on top, Collapse, Exit |
-| Tray icon right-click | Menu: Settings, Show/Hide, Always on top, Exit |
+| Tray icon right-click | Menu: Settings, Show/Hide, Always on top, Restart widget, Exit |
 | Fullscreen app in foreground | Widget hides automatically, returns when you leave fullscreen |
 
 There is deliberately **no close button on the window** — quit from the tray
