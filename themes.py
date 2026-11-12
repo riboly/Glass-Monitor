@@ -1,5 +1,5 @@
 """
-十七套精选配色方案（均可在设置中切换）。
+十八套精选配色方案（均可在设置中切换）。
 """
 
 from __future__ import annotations
@@ -382,13 +382,35 @@ THEMES: Dict[str, dict] = {
             "traffic_red": "#FF453A",
         },
     },
+    "polar_white": {
+        "name": "极地白",
+        "desc": "亮白玻璃 + 冰蓝 / 青绿",
+        "style": {
+            "accent_cpu": "#0B6EDE",
+            "accent_mem": "#7C3AED",
+            "accent_gpu": "#0E7C3A",
+            "accent_up": "#C2410C",
+            "accent_down": "#2563EB",
+            "text_primary": "#1C2330",
+            "text_secondary": "#5B6675",
+            "text_tertiary": "#8A94A3",
+            "glass_bg": "#F2F4F7",
+            "glass_card": "#FFFFFF",
+            "glass_elevated": "#E9EDF2",
+            "glass_border": "#D3DAE2",
+            "separator": "#E9EDF2",
+            "traffic_green": "#15803D",
+            "traffic_yellow": "#B45309",
+            "traffic_red": "#DC2626",
+        },
+    },
 }
 
 THEME_ORDER: List[str] = [
     "midnight", "ocean", "sakura", "forest", "mono",
     "aurora", "cobalt", "lavender", "frost", "deep_space",
     "teal_noir", "plum", "mint_graphite", "arctic", "blueprint",
-    "amber_dusk", "mist_blue",
+    "amber_dusk", "mist_blue", "polar_white",
 ]
 
 
