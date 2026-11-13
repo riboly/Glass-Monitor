@@ -999,9 +999,10 @@ class GlassMonitorApp:
         for part in self._parts[:3]:
             self._draw_bar_row(
                 img, x, row_y, w, part.label, part.percent,
-                f"{part.used_gb:.0f}/{part.total_gb:.0f}G",
+                f"{part.used_gb:.0f}/{part.total_gb:.0f}G "
+                f"剩{100.0 - part.percent:.0f}%",
                 self._usage_color(part.percent),
-                label_w=28, right_w=70,
+                label_w=28, right_w=118,
             )
             row_y += ROW_H
         if not self._parts:
