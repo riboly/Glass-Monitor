@@ -65,7 +65,7 @@ in Settings) to change their order.
 There is deliberately **no close button on the window** — quit from the tray
 menu or the right-click menu.
 
-### Double-click actions — 42 to choose from
+### Double-click actions — 43 to choose from
 
 Every card can be bound to its own double-click action, configured in
 Settings. The built-in actions cover system tools (Task Manager, Resource
