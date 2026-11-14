@@ -9,7 +9,8 @@
   "clock": {
     "stroke": 1.4,
     "tracking": 2.0,
-    "date_format": "zh"
+    "date_format": "zh",
+    "show_seconds": false
   },
   "hotkey": {
     "enabled": true,

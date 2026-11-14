@@ -460,6 +460,14 @@ class SettingsWindow:
         cmb_date_fmt.pack(anchor="w", padx=pad_x)
         self._claim_wheel(cmb_date_fmt)
 
+        self.var_clock_seconds = tk.BooleanVar(
+            value=bool(clock_cfg.get("show_seconds", False))
+        )
+        ttk.Checkbutton(
+            root_f, text="时钟显示秒数（时间字号会略缩小以容纳秒数）",
+            variable=self.var_clock_seconds,
+        ).pack(anchor="w", padx=pad_x, pady=(8, 2))
+
         # —— 启动相关 ——
         self.var_autostart = tk.BooleanVar(value=bool(self.cfg.get("autostart", False)))
         ttk.Checkbutton(
@@ -1127,6 +1135,7 @@ class SettingsWindow:
             "stroke": clock_stroke,
             "tracking": clock_tracking,
             "date_format": selected_date_fmt,
+            "show_seconds": bool(self.var_clock_seconds.get()),
         }
         new_cfg["speed"] = {"unit": selected_speed}
         new_cfg["style"] = dict(THEMES[theme_id]["style"])

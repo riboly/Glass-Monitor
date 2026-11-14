@@ -95,6 +95,7 @@ and card order travel with the folder if you move it.
 | Themes | 18 built-in schemes (Midnight Glass, Deep Sea, Aurora Mint, Cobalt Dusk, Amber Dusk, Mist Blue, Polar White, …) |
 | Speed unit | Bytes (MB/s) or bits (Mbps), switchable in Settings |
 | Clock date format | Chinese (2026年11月4日) or ISO (2026-11-04), switchable in Settings |
+| Clock seconds | Optional seconds display (HH:MM:SS, slightly smaller digits), toggle in Settings |
 | Corner radius | 8–36 px, default 22 |
 | Window / card opacity | Sliders, applied live as you drag |
 | Text halo strength | 0–100%, keeps text readable on light wallpapers, 0 disables it |

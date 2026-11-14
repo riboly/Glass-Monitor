@@ -407,6 +407,7 @@ class GlassMonitorApp:
             clock["tracking"] = 2.0
         if clock.get("date_format") not in ("zh", "iso"):
             clock["date_format"] = "zh"
+        clock["show_seconds"] = bool(clock.get("show_seconds", False))
         cfg["clock"] = clock
 
         # 网速单位：bytes = MB/s 等字节口径（默认），bits = Mbps 等比特口径。
@@ -847,8 +848,13 @@ class GlassMonitorApp:
 
         # 时间采用独立高分辨率字形：Bahnschrift + 统一外扩 + 纵向拉伸。
         # 图像按可见包围盒定位，避免 Pillow 字体上行/下行空白影响对齐。
+        # 开秒数时字号略降（43 → 34），避免 HH:MM:SS 挤到右侧星期/日期。
+        if self.cfg.get("clock", {}).get("show_seconds"):
+            time_text, time_size = now.strftime("%H:%M:%S"), 34
+        else:
+            time_text, time_size = now.strftime("%H:%M"), 43
         time_img = render_clock_time(
-            now.strftime("%H:%M"), size=43, color=self.c["text"],
+            time_text, size=time_size, color=self.c["text"],
             x_scale=0.92, y_scale=1.22,
             stroke=float(self.cfg.get("clock", {}).get("stroke", 1.4)),
             tracking=float(self.cfg.get("clock", {}).get("tracking", 2.0)),
