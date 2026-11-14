@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import os
+import platform
 import subprocess
 import threading
 import time
@@ -203,6 +204,40 @@ def get_cpu_temp() -> Optional[float]:
         return _cpu_temp_cache
 
 
+# ---------------------------------------------------------------------------
+# CPU 型号：platform.processor() 在 Windows 上返回注册表里的
+# ProcessorNameString，如 "Intel(R) Core(TM) i7-12700H CPU @ 2.30GHz"；
+# 去掉营销后缀与主频，缩成硬件卡底部能放下的一行。
+# ---------------------------------------------------------------------------
+_CPU_MODEL_MAX_LEN = 34
+_cpu_model_cache: Optional[str] = None
+
+
+def clean_cpu_model(raw: str) -> str:
+    """把原始 CPU 型号串缩成一行短型号；无法识别时返回空串。"""
+    text = (raw or "").strip()
+    if not text or text.startswith("Intel64 Family"):
+        return ""
+    for token in ("(R)", "(TM)", "(tm)"):
+        text = text.replace(token, "")
+    if " @ " in text:
+        text = text.split(" @ ", 1)[0]
+    text = text.replace(" CPU ", " ").replace(" CPU", "")
+    text = " ".join(text.split())
+    return text[:_CPU_MODEL_MAX_LEN].rstrip()
+
+
+def get_cpu_model() -> str:
+    """进程内只读一次的 CPU 型号（空串表示读不到或无法识别）。"""
+    global _cpu_model_cache
+    if _cpu_model_cache is None:
+        try:
+            _cpu_model_cache = clean_cpu_model(platform.processor())
+        except Exception:
+            _cpu_model_cache = ""
+    return _cpu_model_cache
+
+
 def shutdown_cpu_temp() -> None:
     global _cpu_temp_proc, _cpu_temp_thread_started, _cpu_temp_cache
     proc = _cpu_temp_proc
@@ -238,6 +273,7 @@ class Sample:
     net_down_bps: float
     disk_read_bps: float = 0.0
     disk_write_bps: float = 0.0
+    cpu_model: str = ""
 
 
 @dataclass
@@ -488,6 +524,7 @@ class MetricsCollector:
             net_down_bps=down_bps,
             disk_read_bps=read_bps,
             disk_write_bps=write_bps,
+            cpu_model=get_cpu_model(),
         )
         self.history.append(s)
         return s

@@ -243,7 +243,7 @@ class GlassMonitorApp:
     SPEED_H = 52
     TRAFFIC_H = 86
     CHART_H = 190
-    HW_CARD_H = 152
+    HW_CARD_H = 168
     PROC_ROWS = 3
     COMPACT_H = 52
     DEFAULT_CORNER_R = 22
@@ -905,6 +905,13 @@ class GlassMonitorApp:
                 img, (cx, lay["ring_meta_y"]), meta, size=12, bold=True,
                 color=accent, anchor="mm", halo=self.halo,
             )
+        # 底部居中一行 CPU 型号（读不到时不画，不留空行）。
+        model = getattr(s, "cpu_model", "") if s is not None else ""
+        box = lay["hw"]
+        if model and box is not None:
+            x, y, w, h = box
+            draw_text(img, (x + w / 2, y + h - 11), model, size=10,
+                      color=self.c["sub"], anchor="mm", halo=self.halo)
 
     def _draw_speed(self, img: Image.Image, lay: dict) -> None:
         s = self._sample
