@@ -1,5 +1,5 @@
 """
-十八套精选配色方案（均可在设置中切换）。
+十九套精选配色方案（均可在设置中切换）。
 """
 
 from __future__ import annotations
@@ -404,13 +404,35 @@ THEMES: Dict[str, dict] = {
             "traffic_red": "#DC2626",
         },
     },
+    "sakura_pink": {
+        "name": "樱花粉",
+        "desc": "浅粉玻璃 + 玫瑰粉",
+        "style": {
+            "accent_cpu": "#D94F70",
+            "accent_mem": "#B06AB8",
+            "accent_gpu": "#3D9970",
+            "accent_up": "#C2410C",
+            "accent_down": "#2563EB",
+            "text_primary": "#33202A",
+            "text_secondary": "#7A5A68",
+            "text_tertiary": "#A98A96",
+            "glass_bg": "#F9EDEF",
+            "glass_card": "#FFF7F9",
+            "glass_elevated": "#F3E2E8",
+            "glass_border": "#E5C9D3",
+            "separator": "#F3E2E8",
+            "traffic_green": "#15803D",
+            "traffic_yellow": "#B45309",
+            "traffic_red": "#DC2626",
+        },
+    },
 }
 
 THEME_ORDER: List[str] = [
     "midnight", "ocean", "sakura", "forest", "mono",
     "aurora", "cobalt", "lavender", "frost", "deep_space",
     "teal_noir", "plum", "mint_graphite", "arctic", "blueprint",
-    "amber_dusk", "mist_blue", "polar_white",
+    "amber_dusk", "mist_blue", "polar_white", "sakura_pink",
 ]
 
 

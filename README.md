@@ -92,7 +92,7 @@ and card order travel with the folder if you move it.
 | Lock position | Prevents accidental dragging |
 | Auto-hide on fullscreen | Hides over fullscreen apps |
 | Edge snap distance | 0–64 px, 0 disables snapping |
-| Themes | 18 built-in schemes (Midnight Glass, Deep Sea, Aurora Mint, Cobalt Dusk, Amber Dusk, Mist Blue, Polar White, …) |
+| Themes | 19 built-in schemes (Midnight Glass, Deep Sea, Aurora Mint, Cobalt Dusk, Amber Dusk, Mist Blue, Polar White, Sakura Pink, …) |
 | Speed unit | Bytes (MB/s) or bits (Mbps), switchable in Settings |
 | Clock date format | Chinese (2026年11月4日) or ISO (2026-11-04), switchable in Settings |
 | Clock seconds | Optional seconds display (HH:MM:SS, slightly smaller digits), toggle in Settings |
