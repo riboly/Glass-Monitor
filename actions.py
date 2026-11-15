@@ -199,6 +199,7 @@ ACTIONS: Tuple[Action, ...] = (
     Action("notepad", "工具", "记事本", lambda app: _popen([_sys("notepad.exe")], hide_console=False)),
     Action("mspaint", "工具", "画图", lambda app: _popen([_sys("mspaint.exe")])),
     Action("osk", "工具", "屏幕键盘", lambda app: _popen([_sys("osk.exe")])),
+    Action("magnify", "工具", "放大镜", lambda app: _popen([_sys("magnify.exe")])),
 
     # —— 终端 ——
     Action("powershell", "终端", "PowerShell",
