@@ -115,6 +115,7 @@ from metrics import (
     format_speed,
     format_temp,
     format_uptime,
+    get_windows_version,
     gpu_memory,
     shutdown_nvml,
     uptime_seconds,
@@ -616,7 +617,8 @@ class GlassMonitorApp:
         分区数、有没有电池都会改变行数，所以不能写死。
         """
         n_parts = max(1, min(3, len(self._parts)))
-        n_sys = 1 + (1 if self._battery is not None else 0)
+        n_sys = (1 + (1 if self._battery is not None else 0)
+                 + (1 if get_windows_version() else 0))
         return {
             "clock": self.CLOCK_H,
             "hw": self.HW_CARD_H,
@@ -1075,6 +1077,17 @@ class GlassMonitorApp:
             color = (self.style.get("traffic_green", "#30D158") if b.plugged
                      else self._usage_color(100.0 - b.percent))
             self._draw_bar_row(img, x, row_y, w, "电池", b.percent, right, color)
+
+        # 底部一行 Windows 版本（非 Windows 读不到时不画，不留空行）。
+        version = get_windows_version()
+        if version:
+            if b is not None:
+                row_y += ROW_H
+            p = self.CARD_PAD_X
+            draw_text(img, (x + p, row_y), "版本", size=10,
+                      color=self.c["sub"], anchor="lm", halo=self.halo)
+            draw_text(img, (x + w - p, row_y), version, size=10, bold=True,
+                      color=self.c["text"], anchor="rm", halo=self.halo)
 
     def _draw_traffic(self, img: Image.Image, lay: dict) -> None:
         box = lay["traffic"]

@@ -238,6 +238,40 @@ def get_cpu_model() -> str:
     return _cpu_model_cache
 
 
+# Windows 版本名：build 号 ≥ 22000 为 Windows 11，否则 Windows 10；
+# 已知大版本 build 映射到更新名，未知 build 只显示 build 号。
+_WIN11_RELEASES = {26100: "24H2", 22631: "23H2", 22621: "22H2"}
+_WIN10_RELEASES = {19045: "22H2", 19044: "21H2", 19043: "21H1",
+                    19042: "20H2", 19041: "2004"}
+_windows_version_cache: Optional[str] = None
+
+
+def windows_release_name(build: int) -> str:
+    """build 号 → 一行短版本名（如 Windows 11 24H2）；build 非法时返回空串。"""
+    if build <= 0:
+        return ""
+    if build >= 22000:
+        release = _WIN11_RELEASES.get(build)
+        return f"Windows 11 {release}" if release else f"Windows 11 ({build})"
+    release = _WIN10_RELEASES.get(build)
+    return f"Windows 10 {release}" if release else f"Windows 10 ({build})"
+
+
+def get_windows_version() -> str:
+    """进程内只读一次的 Windows 版本名（非 Windows 或读不到返回空串）。"""
+    global _windows_version_cache
+    if _windows_version_cache is None:
+        _windows_version_cache = ""
+        try:
+            if platform.system() == "Windows":
+                parts = platform.version().split(".")
+                build = int(parts[2]) if len(parts) > 2 else 0
+                _windows_version_cache = windows_release_name(build)
+        except Exception:
+            _windows_version_cache = ""
+    return _windows_version_cache
+
+
 def shutdown_cpu_temp() -> None:
     global _cpu_temp_proc, _cpu_temp_thread_started, _cpu_temp_cache
     proc = _cpu_temp_proc

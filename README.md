@@ -37,7 +37,7 @@ in Settings) to change their order.
 | **Speed Chart** | Dual-color area chart of network throughput, with peak values |
 | **Disk** | Read / write rates for all disks, plus per-partition usage bars that change color at thresholds and show remaining-space percentage |
 | **Top Processes** | Top 3 processes by CPU usage (name, memory, CPU%) |
-| **System Info** | Uptime, VRAM usage, battery status (battery row is omitted automatically on desktops without a battery) |
+| **System Info** | Uptime, VRAM usage, battery status (battery row is omitted automatically on desktops without a battery), and the Windows version |
 | **VPS Traffic** | Bandwidth quota progress bar: green under 50%, yellow at 50–70%, red above 70% |
 
 ### Temperatures
