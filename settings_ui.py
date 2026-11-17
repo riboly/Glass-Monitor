@@ -289,6 +289,14 @@ class SettingsWindow:
         cmb_speed.pack(anchor="w", padx=pad_x)
         self._claim_wheel(cmb_speed)
 
+        self.var_speed_today = tk.BooleanVar(
+            value=bool(self.cfg.get("speed", {}).get("show_today_total", False))
+        )
+        ttk.Checkbutton(
+            root_f, text="网速卡片显示今日累计流量（自本次启动起累计，午夜清零）",
+            variable=self.var_speed_today,
+        ).pack(anchor="w", padx=pad_x, pady=(6, 2))
+
         row_width = ttk.Frame(root_f)
         row_width.pack(anchor="w", padx=pad_x, pady=(8, 2), fill=tk.X)
         ttk.Label(row_width, text="窗口宽度（260–420）").pack(side=tk.LEFT)
@@ -1137,7 +1145,10 @@ class SettingsWindow:
             "date_format": selected_date_fmt,
             "show_seconds": bool(self.var_clock_seconds.get()),
         }
-        new_cfg["speed"] = {"unit": selected_speed}
+        new_cfg["speed"] = {
+            "unit": selected_speed,
+            "show_today_total": bool(self.var_speed_today.get()),
+        }
         new_cfg["style"] = dict(THEMES[theme_id]["style"])
 
         new_cfg["hotkey"] = {

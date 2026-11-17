@@ -16,6 +16,7 @@ import threading
 import time
 from collections import deque
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 from typing import Deque, Optional, Tuple
 
@@ -308,6 +309,8 @@ class Sample:
     disk_read_bps: float = 0.0
     disk_write_bps: float = 0.0
     cpu_model: str = ""
+    net_up_today: int = 0  # 自当日基线起累计上传字节（午夜重立基线）
+    net_down_today: int = 0
 
 
 @dataclass
@@ -368,12 +371,28 @@ def battery() -> Optional[BatteryInfo]:
     return BatteryInfo(float(b.percent), bool(b.power_plugged), secs)
 
 
+def daily_total(current: int, baseline: Optional[int]) -> int:
+    """自基线起的累计字节数。
+
+    基线为空返回 0；当前值小于基线说明计数器回落（网卡重置），
+    返回当前值本身，即按重置后重新累计计。
+    """
+    if baseline is None:
+        return 0
+    if current < baseline:
+        return max(0, current)
+    return current - baseline
+
+
 @dataclass
 class MetricsCollector:
     history_points: int = 60
     _last_net: Optional[Tuple[int, int]] = None
     _last_net_t: float = 0.0
     _net_active: bool = False
+    # 今日累计流量基线：首次采样（或跨午夜）记下当时的累计计数器
+    _today_date: Optional[date] = None
+    _today_base: Optional[Tuple[int, int]] = None
     history: Deque[Sample] = field(default_factory=deque)
     # 曲线展示用 EMA，减少毛刺
     _ema_up: float = 0.0
@@ -505,6 +524,7 @@ class MetricsCollector:
         cpu_temp = get_cpu_temp() if needs.get("cpu_temp") else None
 
         up_bps = down_bps = 0.0
+        up_today = down_today = 0
         if needs.get("network"):
             io = psutil.net_io_counters()
             sent, recv = io.bytes_sent, io.bytes_recv
@@ -518,6 +538,13 @@ class MetricsCollector:
             self._last_net = (sent, recv)
             self._last_net_t = now
             self._net_active = True
+            # 今日累计：跨午夜重立基线；计数器回落由 daily_total 按重置计。
+            today = date.today()
+            if self._today_date != today or self._today_base is None:
+                self._today_date = today
+                self._today_base = (sent, recv)
+            up_today = daily_total(sent, self._today_base[0])
+            down_today = daily_total(recv, self._today_base[1])
             a = self._ema_alpha
             self._ema_up = a * up_bps + (1 - a) * self._ema_up
             self._ema_down = a * down_bps + (1 - a) * self._ema_down
@@ -525,6 +552,8 @@ class MetricsCollector:
         else:
             self._net_active = False
             self._last_net = None
+            self._today_date = None
+            self._today_base = None
 
         # 磁盘 I/O 速率（全盘聚合，差分）
         read_bps = write_bps = 0.0
@@ -559,6 +588,8 @@ class MetricsCollector:
             disk_read_bps=read_bps,
             disk_write_bps=write_bps,
             cpu_model=get_cpu_model(),
+            net_up_today=up_today,
+            net_down_today=down_today,
         )
         self.history.append(s)
         return s

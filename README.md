@@ -33,7 +33,7 @@ in Settings) to change their order.
 |------|---------------|
 | **Clock & Date** | Large time, plus date, weekday, and week number (weekends highlighted) |
 | **Hardware** | CPU / memory / GPU usage as true-alpha anti-aliased rings (6x supersampled masks), plus temperatures and the CPU model name |
-| **Net Speed** | Live upload / download speed in two capsules |
+| **Net Speed** | Live upload / download speed in two capsules, with an optional per-day total (toggle in Settings; counts from widget start, resets at midnight) |
 | **Speed Chart** | Dual-color area chart of network throughput, with peak values |
 | **Disk** | Read / write rates for all disks, plus per-partition usage bars that change color at thresholds and show remaining-space percentage |
 | **Top Processes** | Top 3 processes by CPU usage (name, memory, CPU%) |

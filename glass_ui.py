@@ -242,6 +242,7 @@ def ring_arc_color(pct: Optional[float], theme_color: str) -> str:
 class GlassMonitorApp:
     CLOCK_H = 74
     SPEED_H = 52
+    SPEED_TODAY_H = 14  # 开今日累计流量时网速卡多出的一行
     TRAFFIC_H = 86
     CHART_H = 190
     HW_CARD_H = 168
@@ -415,6 +416,7 @@ class GlassMonitorApp:
         speed = dict(cfg.get("speed", {}))
         if speed.get("unit") not in ("bytes", "bits"):
             speed["unit"] = "bytes"
+        speed["show_today_total"] = bool(speed.get("show_today_total", False))
         cfg["speed"] = speed
 
         win = dict(cfg.get("window", {}))
@@ -622,7 +624,10 @@ class GlassMonitorApp:
         return {
             "clock": self.CLOCK_H,
             "hw": self.HW_CARD_H,
-            "speed": self.SPEED_H,
+            "speed": self.SPEED_H + (
+                self.SPEED_TODAY_H
+                if self.cfg.get("speed", {}).get("show_today_total") else 0
+            ),
             "chart": self.CHART_H,
             "disk": CARD_HEAD_H + n_parts * ROW_H,
             "proc": CARD_HEAD_H + self.PROC_ROWS * ROW_H,
@@ -924,11 +929,16 @@ class GlassMonitorApp:
         cap_w = lay["speed_cap_w"]
         badge = max(16, int(h * 0.44))
         unit = self.cfg.get("speed", {}).get("unit", "bytes")
+        show_today = bool(self.cfg.get("speed", {}).get("show_today_total"))
+        up_today = getattr(s, "net_up_today", 0) if s is not None else 0
+        down_today = getattr(s, "net_down_today", 0) if s is not None else 0
         halves = (
-            (lay["speed_xs"][0], self.c["up"], "上传", format_speed(up, unit), "up"),
-            (lay["speed_xs"][1], self.c["down"], "下载", format_speed(down, unit), "down"),
+            (lay["speed_xs"][0], self.c["up"], "上传", format_speed(up, unit),
+             "up", f"今日 {format_bytes(up_today)}"),
+            (lay["speed_xs"][1], self.c["down"], "下载", format_speed(down, unit),
+             "down", f"今日 {format_bytes(down_today)}"),
         )
-        for x, accent, label, value, direction in halves:
+        for x, accent, label, value, direction, today_txt in halves:
             composite_at(
                 img, render_arrow_badge(direction, accent, badge, 8),
                 x + 10, y + (h - badge) // 2,
@@ -942,6 +952,11 @@ class GlassMonitorApp:
                 img, (tx, y + 21), value, size=15, bold=True, color=accent,
                 anchor="la", halo=self.halo,
             )
+            if show_today:
+                draw_text(
+                    img, (tx, y + 40), today_txt, size=10,
+                    color=self.c["sub"], anchor="la", halo=self.halo,
+                )
             bar_w = max(8, cap_w - 24)
             composite_at(img, render_pill(bar_w, 2, accent, 235), x + 12, y + h - 9)
 

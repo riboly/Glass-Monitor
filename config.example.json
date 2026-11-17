@@ -4,7 +4,8 @@
   "update_interval_ms": 1000,
   "history_points": 60,
   "speed": {
-    "unit": "bytes"
+    "unit": "bytes",
+    "show_today_total": false
   },
   "clock": {
     "stroke": 1.4,

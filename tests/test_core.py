@@ -86,6 +86,39 @@ class CoreTests(unittest.TestCase):
         self.assertEqual(format_uptime(86400), "1天0小时")
         self.assertEqual(format_uptime(90061), "1天1小时")
 
+    def test_daily_total_and_collector_today_baseline(self) -> None:
+        from datetime import date, timedelta
+        from types import SimpleNamespace
+
+        import metrics
+        from metrics import MetricsCollector, daily_total
+
+        self.assertEqual(daily_total(1000, 0), 1000)
+        self.assertEqual(daily_total(500, 500), 0)
+        self.assertEqual(daily_total(0, None), 0)
+        self.assertEqual(daily_total(300, 1000), 300)  # 计数器回落按重置计
+        self.assertEqual(daily_total(-5, 100), 0)
+
+        orig = metrics.psutil.net_io_counters
+        try:
+            counters = {"sent": 10_000, "recv": 20_000}
+            metrics.psutil.net_io_counters = lambda: SimpleNamespace(
+                bytes_sent=counters["sent"], bytes_recv=counters["recv"]
+            )
+            c = MetricsCollector()
+            s1 = c.sample({"network": True})
+            self.assertEqual((s1.net_up_today, s1.net_down_today), (0, 0))
+            counters["sent"] += 1500
+            counters["recv"] += 2500
+            s2 = c.sample({"network": True})
+            self.assertEqual((s2.net_up_today, s2.net_down_today), (1500, 2500))
+            # 跨午夜：基线重立，当天累计归零
+            c._today_date = date.today() - timedelta(days=1)
+            s3 = c.sample({"network": True})
+            self.assertEqual((s3.net_up_today, s3.net_down_today), (0, 0))
+        finally:
+            metrics.psutil.net_io_counters = orig
+
     def test_discrete_gpu_picker_prefers_rtx_a_via_rtx(self) -> None:
         from types import SimpleNamespace
 
